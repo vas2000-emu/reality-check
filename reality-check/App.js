@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Image, Animated, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 // Get the device's screen dimensions
-const { height: screenHeight } = Dimensions.get('window');
+const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 function FileUpload({ setPreviewSource }) {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        if (file && file.type === 'image/png') { // Limit file type to PNG
+        if (file && (file.type === 'image/jpeg' || file.type === 'image/jpg')) {
             setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -18,7 +18,7 @@ function FileUpload({ setPreviewSource }) {
             };
             reader.readAsDataURL(file);
         } else {
-            alert('Please upload a valid PNG file.');
+            alert('Please upload a valid JPG file.');
         }
     };
 
@@ -35,7 +35,7 @@ function FileUpload({ setPreviewSource }) {
                 id="file-input"
                 onChange={handleFileChange}
                 style={styles.fileInput}
-                accept=".png" // Limit to PNG file type
+                accept=".jpg,.jpeg"
             />
         </View>
     );
@@ -43,49 +43,15 @@ function FileUpload({ setPreviewSource }) {
 
 export default function App() {
     const [previewSource, setPreviewSource] = useState(null);
-    const animatedValue = useRef(new Animated.Value(0)).current;
 
-    useEffect(() => {
-        const animateText = () => {
-            Animated.loop(
-                Animated.sequence([
-                    Animated.timing(animatedValue, {
-                        toValue: 1,
-                        duration: 1000,
-                        useNativeDriver: true,
-                    }),
-                    Animated.timing(animatedValue, {
-                        toValue: 0,
-                        duration: 1000,
-                        useNativeDriver: true,
-                    }),
-                ])
-            ).start();
-        };
-
-        animateText();
-    }, [animatedValue]);
-
-    const animatedTextStyle = {
-        opacity: animatedValue,
-        transform: [
-            {
-                translateY: animatedValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, -10],
-                }),
-            },
-        ],
-    };
-
-    // Calculate the height of the image preview based on the screen size minus top and bottom padding
-    const imagePreviewHeight = screenHeight - 40; // Subtracting 20px padding top and 20px padding bottom
+    // Calculate the height of the image preview based on the screen size minus padding
+    const imagePreviewHeight = screenHeight - 40;
 
     return (
         <LinearGradient colors={['#001f3f', '#0074D9']} style={styles.gradient}>
             <View style={styles.container}>
                 <View style={styles.fileUploadArea}>
-                    <Animated.Text style={[styles.text, animatedTextStyle]}>reAlity|check!</Animated.Text>
+                    <Text style={styles.text}>reAlity|check</Text>
                     <FileUpload setPreviewSource={setPreviewSource} />
                 </View>
                 {previewSource && (
@@ -107,14 +73,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
-        alignItems: 'center', // Center vertically
-        justifyContent: 'space-between', // Space between the file upload area and image preview
-        paddingTop: 20, // Top padding
-        paddingBottom: 20, // Bottom padding
-        paddingHorizontal: 20, // Horizontal padding
+        alignItems: 'center',
+        justifyContent: 'center', // Centering all items in the container
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingHorizontal: 20,
     },
     fileUploadArea: {
-        width: '20%', // Set width to 40% of the screen
+        width: '20%', // Set width to 20% of the screen
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slight background for contrast
@@ -131,7 +97,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 24,
-        color: '#000', // Black color for the animated text
+        color: '#000',
         marginBottom: 20,
     },
     fileUploadContainer: {
@@ -157,6 +123,6 @@ const styles = StyleSheet.create({
         width: '60%', // Occupy 60% of the screen width
         borderRadius: 10,
         resizeMode: 'cover',
-        marginLeft: 10, // Space between file upload area and image preview
+        marginLeft: 10,
     },
 });
