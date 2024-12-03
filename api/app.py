@@ -1,12 +1,11 @@
-from flask import Flask, request, jsonify
-from io import BytesIO
-from PIL import Image
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torchvision import transforms
+import torchvision.transforms as transforms
+from PIL import Image
+from flask import Flask, request, jsonify
+from io import BytesIO
 
-# Define the CNN model
+
 class VerifierCNN(nn.Module):
     def __init__(self):
         super().__init__()
@@ -27,10 +26,32 @@ class VerifierCNN(nn.Module):
         x = self.pool(x)
         x = self.relu(self.conv4(x))
         x = self.pool(x)
-        # Flatten dynamically
-        x = x.view(x.size(0), -1)
+        x = x.view(x.size(0), -1)  # Flatten dynamically
         x = self.fc1(x)
-        return F.softmax(x, dim=1)
+        return x
+
+
+# Define the image preprocessing and prediction functions
+def preprocess_image(image_bytes):
+    transform = transforms.Compose([
+        transforms.Resize((128, 128)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5647, 0.4770, 0.4273), (0.2724, 0.2619, 0.2676))
+    ])
+    image = Image.open(BytesIO(image_bytes)).convert('RGB')
+    image = transform(image)
+    image = image.unsqueeze(0)  # Add batch dimension
+    return image
+
+
+def predict_image(image_bytes, model):
+    image = preprocess_image(image_bytes)
+    with torch.no_grad():
+        outputs = model(image)
+        softmax_probs = torch.softmax(outputs, dim=1)
+        percent_ai = softmax_probs[0][0].item()
+        return percent_ai
+
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -40,19 +61,13 @@ model = VerifierCNN()
 
 # Load the saved model weights
 try:
-    model.load_state_dict(torch.load('final_cnn_model.pth', map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load('cnn_weights.pth', map_location=torch.device('cpu')))
     model.eval()
     print("Model loaded successfully.")
 except FileNotFoundError:
-    print("Error: final_cnn_model.pth file not found.")
+    print("Error: cnn_weights.pth file not found.")
     exit(1)
 
-# Define image transformation
-transform = transforms.Compose([
-    transforms.Resize((128, 128)),
-    transforms.ToTensor(),
-    transforms.Normalize((0.5647, 0.4770, 0.4273), (0.2724, 0.2619, 0.2676))
-])
 
 # Prediction route
 @app.route('/predict', methods=['POST'])
@@ -63,18 +78,11 @@ def predict():
     image = request.files['image']
 
     try:
-        img = Image.open(BytesIO(image.read())).convert('RGB')
-        img = transform(img).unsqueeze(0)  # Add batch dimension
-
-        # Make prediction
-        with torch.no_grad():
-            outputs = model(img)
-            _, predicted = torch.max(outputs, 1)
-            prediction = "AI-Generated" if predicted.item() == 0 else "Real"
-
-        return jsonify({'prediction': prediction})
+        percent_ai = predict_image(image.read(), model)
+        return jsonify({'percent_ai': percent_ai})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # Run the app
 if __name__ == '__main__':

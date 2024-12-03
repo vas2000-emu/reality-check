@@ -20,21 +20,21 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
         }
     };
 
-    // Function to send the image file to the backend
     const uploadImage = async (file) => {
         const formData = new FormData();
         formData.append('image', file);
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/predict', {
+            const response = await fetch('http://127.0.0.1:5000/predict', {  // Update this URL with your deployed Flask API endpoint
                 method: 'POST',
                 body: formData,
             });
 
             if (response.ok) {
                 const data = await response.json();
-                const prediction = data.prediction;
-                alert(`Prediction: ${prediction}`);
+                const aiProbability = data.percent_ai;
+                setCoveragePercentage((aiProbability * 100).toFixed(2));  // Set the coverage percentage
+                alert(`Probability that the image is AI-generated: ${(aiProbability * 100).toFixed(2)}%`);
             } else {
                 alert('Failed to upload the image.');
             }
@@ -43,7 +43,6 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
             alert('An error occurred while uploading the image.');
         }
     };
-
 
     return (
         <div style={styles.fileUploadContainer}>
@@ -64,11 +63,10 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
     );
 }
 
-
 export default function App() {
     const [previewSource, setPreviewSource] = useState(null);
-    const [coveragePercentage, setCoveragePercentage] = useState(0); // Default to 0%
-    const [percentageTextVisible, setPercentageTextVisible] = useState(false); // Controls visibility of the percentage text
+    const [coveragePercentage, setCoveragePercentage] = useState(0);
+    const [percentageTextVisible, setPercentageTextVisible] = useState(false);
 
     return (
         <div style={styles.gradient}>
@@ -98,7 +96,7 @@ export default function App() {
                                 borderBottomRightRadius: '10px',
                             }}
                             onTransitionEnd={() => setPercentageTextVisible(true)}
-                            data-testid="overlay" // Add data-testid for easy testing
+                            data-testid="overlay"
                         />
                         {percentageTextVisible && (
                             <div style={styles.percentageText} data-testid="percentage-text">
@@ -111,7 +109,6 @@ export default function App() {
         </div>
     );
 }
-
 
 const styles = {
     gradient: {
@@ -176,8 +173,8 @@ const styles = {
         width: '100%',
         backgroundColor: 'rgba(255, 255, 255, 0.25)',
         zIndex: '1',
-        borderBottomLeftRadius: '10px', // Round bottom left corner
-        borderBottomRightRadius: '10px', // Round bottom right corner
+        borderBottomLeftRadius: '10px',
+        borderBottomRightRadius: '10px',
     },
     percentageText: {
         position: 'absolute',
@@ -189,4 +186,3 @@ const styles = {
         fontWeight: 'bold',
     },
 };
-
