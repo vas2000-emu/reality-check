@@ -23,19 +23,18 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
     // Function to send the image file to the backend
     const uploadImage = async (file) => {
         const formData = new FormData();
-        formData.append('image', file); // Append the image file to FormData
+        formData.append('image', file);
 
         try {
-            // Replace with the actual backend API endpoint
-            const response = await fetch('/api/predict-ai-image', {
+            const response = await fetch('http://127.0.0.1:5000/predict', {
                 method: 'POST',
                 body: formData,
             });
 
             if (response.ok) {
                 const data = await response.json();
-                const { coveragePercentage } = data; // Assuming the backend returns the coverage percentage
-                setCoveragePercentage(coveragePercentage); // Update the coverage percentage in the parent component
+                const prediction = data.prediction;
+                alert(`Prediction: ${prediction}`);
             } else {
                 alert('Failed to upload the image.');
             }
@@ -44,6 +43,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
             alert('An error occurred while uploading the image.');
         }
     };
+
 
     return (
         <div style={styles.fileUploadContainer}>
