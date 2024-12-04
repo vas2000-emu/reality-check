@@ -162,9 +162,15 @@ const styles = {
         position: 'relative',
         width: '80%',
         maxWidth: '800px',
+        maxHeight: '80vh',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     imagePreview: {
-        width: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%',
         borderRadius: '10px',
     },
     overlay: {

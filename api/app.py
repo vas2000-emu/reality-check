@@ -3,8 +3,8 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 from PIL import Image
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from io import BytesIO
-
 
 class VerifierCNN(nn.Module):
     def __init__(self):
@@ -30,7 +30,6 @@ class VerifierCNN(nn.Module):
         x = self.fc1(x)
         return x
 
-
 # Define the image preprocessing and prediction functions
 def preprocess_image(image_bytes):
     transform = transforms.Compose([
@@ -43,7 +42,6 @@ def preprocess_image(image_bytes):
     image = image.unsqueeze(0)  # Add batch dimension
     return image
 
-
 def predict_image(image_bytes, model):
     image = preprocess_image(image_bytes)
     with torch.no_grad():
@@ -52,9 +50,10 @@ def predict_image(image_bytes, model):
         percent_ai = softmax_probs[0][0].item()
         return percent_ai
 
-
 # Initialize Flask app
 app = Flask(__name__)
+cors = CORS(app, resources={r"/predict": {"origins": "http://localhost:3000"}})  # Allow CORS only for the specific route
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Initialize the model
 model = VerifierCNN()
@@ -68,10 +67,11 @@ except FileNotFoundError:
     print("Error: cnn_weights.pth file not found.")
     exit(1)
 
-
 # Prediction route
 @app.route('/predict', methods=['POST'])
+@cross_origin()  # Enable CORS for this specific route
 def predict():
+    print("Somebody called me.")
     if 'image' not in request.files:
         return jsonify({'error': 'No image part provided'}), 400
 
@@ -82,7 +82,6 @@ def predict():
         return jsonify({'percent_ai': percent_ai})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 # Run the app
 if __name__ == '__main__':
