@@ -71,7 +71,6 @@ except FileNotFoundError:
 @app.route('/predict', methods=['POST'])
 @cross_origin()  # Enable CORS for this specific route
 def predict():
-    print("Somebody called me.")
     if 'image' not in request.files:
         return jsonify({'error': 'No image part provided'}), 400
 
@@ -79,6 +78,7 @@ def predict():
 
     try:
         percent_ai = predict_image(image.read(), model)
+        print(percent_ai)
         return jsonify({'percent_ai': percent_ai})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
