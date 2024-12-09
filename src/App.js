@@ -108,9 +108,15 @@ export default function App() {
     const [prediction, setPrediction] = useState('');
     const [infoBoxVisible, setInfoBoxVisible] = useState(false);  // Ensure state is defined
 
+    const handleGlobalClick = () => {
+        if (!linkClicked) {
+            alert('Please click on the link labeled "BEGIN HERE" before using this website.');
+        }
+    };
+
     return (
-        <div style={styles.gradient}>
-            <div style={styles.container}>
+        <div style={styles.gradient} onClick={handleGlobalClick}>
+            <div style={styles.container} onClick={(e) => e.stopPropagation()}>
                 <div style={styles.fileUploadArea}>
                     <h1 style={styles.logoText}>reAlity|check</h1>
                     <FileUpload
@@ -224,7 +230,7 @@ const styles = {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
         transition: 'opacity 0.5s',
-        opacity: 1,  // Always set to 1 for now to prevent undefined issue during build
+        opacity: infoBoxVisible ? 1 : 0,  // Update visibility based on infoBoxVisible state
     },
     infoContent: {
         display: 'flex',
