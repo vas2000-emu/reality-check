@@ -98,11 +98,11 @@ export default function App() {
                             onTransitionEnd={() => setPercentageTextVisible(true)}
                             data-testid="overlay"
                         />
-                        {percentageTextVisible && (
-                            <div style={styles.probabilityText} data-testid="percentage-text">
-                                Probability: {coveragePercentage}%
-                            </div>
-                        )}
+                    </div>
+                )}
+                {percentageTextVisible && (
+                    <div style={styles.probabilityBox} data-testid="probability-box">
+                        Probability: {coveragePercentage}%
                     </div>
                 )}
             </div>
@@ -182,13 +182,18 @@ const styles = {
         borderBottomLeftRadius: '10px',
         borderBottomRightRadius: '10px',
     },
-    probabilityText: {
-        position: 'absolute',
+    probabilityBox: {
+        position: 'fixed',
         right: '5%',
         top: '50%',
         transform: 'translateY(-50%)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        padding: '10px 20px',
+        borderRadius: '5px',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
         fontSize: '24px', // Slightly bigger font
-        color: '#fff',
+        color: '#000',
         fontWeight: 'bold',
+        textAlign: 'center',
     },
 };
