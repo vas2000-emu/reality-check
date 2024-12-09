@@ -30,7 +30,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setIsAi }) {
         formData.append('image', file);
 
         try {
-            const response = await fetch('/.netlify/functions/predict', {
+            const response = await fetch('/netlify/functions/predict', {
                 method: 'POST',
                 body: formData,
             });
