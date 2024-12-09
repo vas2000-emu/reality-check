@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setImageUploaded, setInfoBoxVisible }) {
+function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setInfoBoxVisible }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [linkClicked, setLinkClicked] = useState(false);
     const [linkText, setLinkText] = useState("BEGIN HERE");
@@ -22,7 +22,6 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
 
             // Send the image file to the backend after it's selected
             uploadImage(file);
-            setImageUploaded(true);
             setInfoBoxVisible(true);  // Show infoBox when an image is uploaded
         } else {
             alert('Please upload a valid image file.');
@@ -107,7 +106,6 @@ export default function App() {
     const [previewSource, setPreviewSource] = useState(null);
     const [coveragePercentage, setCoveragePercentage] = useState(0);
     const [prediction, setPrediction] = useState('');
-    const [imageUploaded, setImageUploaded] = useState(false);
     const [infoBoxVisible, setInfoBoxVisible] = useState(false);  // Ensure state is defined
 
     return (
@@ -119,7 +117,6 @@ export default function App() {
                         setPreviewSource={setPreviewSource}
                         setCoveragePercentage={setCoveragePercentage}
                         setPrediction={setPrediction}
-                        setImageUploaded={setImageUploaded}
                         setInfoBoxVisible={setInfoBoxVisible}
                     />
                 </div>
@@ -249,5 +246,6 @@ const styles = {
         fontSize: '24px',
         color: '#000',
         marginTop: '10px',
+        textAlign: 'left',  // Left justify the probability text
     },
 };
