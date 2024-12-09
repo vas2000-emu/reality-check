@@ -99,8 +99,8 @@ export default function App() {
                             data-testid="overlay"
                         />
                         {percentageTextVisible && (
-                            <div style={styles.percentageText} data-testid="percentage-text">
-                                {coveragePercentage}% Coverage
+                            <div style={styles.probabilityText} data-testid="percentage-text">
+                                Probability: {coveragePercentage}%
                             </div>
                         )}
                     </div>
@@ -182,12 +182,12 @@ const styles = {
         borderBottomLeftRadius: '10px',
         borderBottomRightRadius: '10px',
     },
-    percentageText: {
+    probabilityText: {
         position: 'absolute',
-        bottom: '10px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        fontSize: '20px',
+        right: '5%',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        fontSize: '24px', // Slightly bigger font
         color: '#fff',
         fontWeight: 'bold',
     },
