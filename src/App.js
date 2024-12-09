@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function FileUpload({ setPreviewSource, setCoveragePercentage }) {
+function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction }) {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
@@ -33,8 +33,9 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
             if (response.ok) {
                 const data = await response.json();
                 const aiProbability = data.percent_ai;
-                setCoveragePercentage((aiProbability * 100).toFixed(2));  // Set the coverage percentage
-                alert(`Probability that the image is AI-generated: ${(aiProbability * 100).toFixed(2)}%`);
+                const percentage = (aiProbability * 100).toFixed(2);
+                setCoveragePercentage(percentage);  // Set the coverage percentage
+                setPrediction(aiProbability > 0.5 ? 'AI-generated' : 'Real');
             } else {
                 alert('Failed to upload the image.');
             }
@@ -66,7 +67,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
 export default function App() {
     const [previewSource, setPreviewSource] = useState(null);
     const [coveragePercentage, setCoveragePercentage] = useState(0);
-    const [percentageTextVisible, setPercentageTextVisible] = useState(false);
+    const [prediction, setPrediction] = useState('');
 
     return (
         <div style={styles.gradient}>
@@ -76,6 +77,7 @@ export default function App() {
                     <FileUpload
                         setPreviewSource={setPreviewSource}
                         setCoveragePercentage={setCoveragePercentage}
+                        setPrediction={setPrediction}
                     />
                 </div>
                 {previewSource && (
@@ -85,24 +87,13 @@ export default function App() {
                             alt="Preview"
                             style={styles.imagePreview}
                         />
-                        <div
-                            style={{
-                                ...styles.overlay,
-                                height: `${coveragePercentage}%`,
-                                bottom: 0,
-                                top: 'auto',
-                                transition: 'height 1s ease-in-out',
-                                borderBottomLeftRadius: '10px',
-                                borderBottomRightRadius: '10px',
-                            }}
-                            onTransitionEnd={() => setPercentageTextVisible(true)}
-                            data-testid="overlay"
-                        />
                     </div>
                 )}
-                {percentageTextVisible && (
-                    <div style={styles.infoBox} data-testid="info-box">
-                        <p>Probability: {coveragePercentage}%</p>
+                {coveragePercentage > 0 && (
+                    <div style={styles.infoBox}>
+                        <p style={styles.percentage}>{coveragePercentage}%</p>
+                        <p style={styles.probabilityText}>Probability</p>
+                        <p style={styles.predictionText}>{prediction}</p>
                     </div>
                 )}
             </div>
@@ -159,28 +150,16 @@ const styles = {
         border: 'none',
     },
     imageContainer: {
-        position: 'relative',
-        width: '80%',
-        maxWidth: '800px',
-        maxHeight: '80vh',
-        overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        width: 'fit-content',
     },
     imagePreview: {
-        maxWidth: '100%',
-        maxHeight: '100%',
+        width: '100%',  // Adjust width to match upload box width
+        maxWidth: '400px',  // Set a maximum width to control the image size
         borderRadius: '10px',
-    },
-    overlay: {
-        position: 'absolute',
-        left: '0',
-        width: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        zIndex: '1',
-        borderBottomLeftRadius: '10px',
-        borderBottomRightRadius: '10px',
+        marginTop: '20px',
     },
     infoBox: {
         position: 'fixed',
@@ -191,9 +170,21 @@ const styles = {
         padding: '20px',
         borderRadius: '10px',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+        textAlign: 'center',
+    },
+    percentage: {
+        fontSize: '48px',
+        fontWeight: 'bold',
+        color: '#000',
+    },
+    probabilityText: {
         fontSize: '24px',
         color: '#000',
-        fontWeight: 'bold',
-        textAlign: 'center',
+        marginTop: '10px',
+    },
+    predictionText: {
+        fontSize: '24px',
+        color: '#000',
+        marginTop: '10px',
     },
 };
