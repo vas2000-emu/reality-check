@@ -90,9 +90,11 @@ export default function App() {
                     </div>
                 )}
                 <div style={styles.infoBox}>
-                    <p style={styles.percentage}>{coveragePercentage}%</p>
+                    <div style={styles.infoContent}>
+                        <span style={styles.percentage}>{coveragePercentage}%</span>
+                        <span style={styles.predictionText}>{prediction}</span>
+                    </div>
                     <p style={styles.probabilityText}>Probability</p>
-                    <p style={styles.predictionText}>{prediction}</p>
                 </div>
             </div>
         </div>
@@ -170,17 +172,23 @@ const styles = {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
     },
+    infoContent: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     percentage: {
+        fontSize: '48px',
+        fontWeight: 'bold',
+        color: '#000',
+        marginRight: '10px',  // Add some space between the percentage and the prediction text
+    },
+    predictionText: {
         fontSize: '48px',
         fontWeight: 'bold',
         color: '#000',
     },
     probabilityText: {
-        fontSize: '24px',
-        color: '#000',
-        marginTop: '10px',
-    },
-    predictionText: {
         fontSize: '24px',
         color: '#000',
         marginTop: '10px',
