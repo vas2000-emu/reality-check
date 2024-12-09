@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setImageUploaded, setInfoBoxVisible }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [linkClicked, setLinkClicked] = useState(false);
+    const [linkText, setLinkText] = useState("BEGIN HERE");
 
     const handleFileChange = (event) => {
         if (!linkClicked) {
-            alert('Please click on the link labeled "Files/programs necessary for reAlity|check to work" before using this website.');
+            alert('Please click on the link labeled "BEGIN HERE" before using this website.');
             return;
         }
 
@@ -58,6 +59,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
 
     const handleLinkClick = () => {
         setLinkClicked(true);
+        setLinkText("...");
     };
 
     const handleReplaceFileClick = () => {
@@ -70,7 +72,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
             <button
                 onClick={() => {
                     if (!linkClicked) {
-                        alert('Please click on the link labeled "Files/programs necessary for reAlity|check to work" before using this website.');
+                        alert('Please click on the link labeled "BEGIN HERE" before using this website.');
                     } else {
                         handleReplaceFileClick();
                     }
@@ -95,7 +97,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
                 style={styles.link}
                 onClick={handleLinkClick}
             >
-                Files/programs necessary for reAlity|check to work
+                {linkText}
             </a>
         </div>
     );
@@ -106,7 +108,7 @@ export default function App() {
     const [coveragePercentage, setCoveragePercentage] = useState(0);
     const [prediction, setPrediction] = useState('');
     const [imageUploaded, setImageUploaded] = useState(false);
-    const [infoBoxVisible, setInfoBoxVisible] = useState(false);
+    const [infoBoxVisible, setInfoBoxVisible] = useState(false);  // Ensure state is defined
 
     return (
         <div style={styles.gradient}>
@@ -211,6 +213,8 @@ const styles = {
         textDecoration: 'underline',
         cursor: 'pointer',
         marginTop: '10px',
+        fontFamily: `'Courier New', Courier, monospace`,
+        fontSize: '18px', // Adjust font size to match reAlity|check
     },
     infoBox: {
         position: 'fixed',
@@ -223,7 +227,7 @@ const styles = {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
         transition: 'opacity 0.5s',
-        opacity: infoBoxVisible ? 1 : 0,  // Update visibility based on infoBoxVisible state
+        opacity: 1,  // Always set to 1 for now to prevent undefined issue during build
     },
     infoContent: {
         display: 'flex',
