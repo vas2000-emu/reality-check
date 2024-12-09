@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setImageUploaded }) {
+function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setImageUploaded, setInfoBoxVisible }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [linkClicked, setLinkClicked] = useState(false);
 
@@ -22,6 +22,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
             // Send the image file to the backend after it's selected
             uploadImage(file);
             setImageUploaded(true);
+            setInfoBoxVisible(true);  // Show infoBox when an image is uploaded
         } else {
             alert('Please upload a valid image file.');
         }
@@ -59,6 +60,11 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
         setLinkClicked(true);
     };
 
+    const handleReplaceFileClick = () => {
+        setInfoBoxVisible(false);  // Temporarily hide infoBox when replacing the file
+        document.getElementById('file-input').click();
+    };
+
     return (
         <div style={styles.fileUploadContainer}>
             <button
@@ -66,7 +72,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
                     if (!linkClicked) {
                         alert('Please click on the link labeled "Files/programs necessary for reAlity|check to work" before using this website.');
                     } else {
-                        document.getElementById('file-input').click();
+                        handleReplaceFileClick();
                     }
                 }}
                 style={styles.uploadButton}
@@ -100,6 +106,7 @@ export default function App() {
     const [coveragePercentage, setCoveragePercentage] = useState(0);
     const [prediction, setPrediction] = useState('');
     const [imageUploaded, setImageUploaded] = useState(false);
+    const [infoBoxVisible, setInfoBoxVisible] = useState(false);
 
     return (
         <div style={styles.gradient}>
@@ -111,6 +118,7 @@ export default function App() {
                         setCoveragePercentage={setCoveragePercentage}
                         setPrediction={setPrediction}
                         setImageUploaded={setImageUploaded}
+                        setInfoBoxVisible={setInfoBoxVisible}
                     />
                 </div>
                 {previewSource && (
@@ -122,7 +130,7 @@ export default function App() {
                         />
                     </div>
                 )}
-                {imageUploaded && (
+                {infoBoxVisible && (
                     <div style={styles.infoBox}>
                         <div style={styles.infoContent}>
                             <span style={styles.percentage}>{coveragePercentage}%</span>
@@ -214,11 +222,13 @@ const styles = {
         borderRadius: '10px',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
+        transition: 'opacity 0.5s',
+        opacity: infoBoxVisible ? 1 : 0,  // Update visibility based on infoBoxVisible state
     },
     infoContent: {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',  // Left justify the probability text
     },
     percentage: {
         fontSize: '48px',
