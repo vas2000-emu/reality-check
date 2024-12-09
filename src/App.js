@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 
 function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setImageUploaded }) {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [linkClicked, setLinkClicked] = useState(false);
 
     const handleFileChange = (event) => {
+        if (!linkClicked) {
+            alert('Please click on the link labeled "Files/programs necessary for reAlity|check to work" before using this website.');
+            return;
+        }
+
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setSelectedFile(file);
@@ -49,11 +55,22 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
         }
     };
 
+    const handleLinkClick = () => {
+        setLinkClicked(true);
+    };
+
     return (
         <div style={styles.fileUploadContainer}>
             <button
-                onClick={() => document.getElementById('file-input').click()}
+                onClick={() => {
+                    if (!linkClicked) {
+                        alert('Please click on the link labeled "Files/programs necessary for reAlity|check to work" before using this website.');
+                    } else {
+                        document.getElementById('file-input').click();
+                    }
+                }}
                 style={styles.uploadButton}
+                disabled={!linkClicked}
             >
                 {selectedFile ? 'Replace File' : 'Upload Image Here!'}
             </button>
@@ -65,6 +82,15 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
                 style={{ display: 'none' }}
                 accept="image/*"
             />
+            <a
+                href="https://drive.google.com/drive/folders/1BCWRh13DqZGT-DcalODgCBNqm0kTZzMu?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={styles.link}
+                onClick={handleLinkClick}
+            >
+                Files/programs necessary for reAlity|check to work
+            </a>
         </div>
     );
 }
@@ -157,6 +183,7 @@ const styles = {
         borderRadius: '5px',
         cursor: 'pointer',
         border: 'none',
+        marginBottom: '10px',
     },
     imageContainer: {
         display: 'flex',
@@ -165,10 +192,17 @@ const styles = {
         width: 'fit-content',
     },
     imagePreview: {
-        width: '100%',  // Adjust width to match upload box width
-        maxWidth: '400px',  // Set a maximum width to control the image size
+        width: '400px',
+        height: '400px',
+        objectFit: 'cover',
         borderRadius: '10px',
         marginTop: '20px',
+    },
+    link: {
+        color: '#0074D9',
+        textDecoration: 'underline',
+        cursor: 'pointer',
+        marginTop: '10px',
     },
     infoBox: {
         position: 'fixed',
