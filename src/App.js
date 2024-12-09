@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
-function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setInfoBoxVisible }) {
+function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setInfoBoxVisible, linkClicked }) {
     const [selectedFile, setSelectedFile] = useState(null);
-    const [linkClicked, setLinkClicked] = useState(false);
     const [linkText, setLinkText] = useState("BEGIN HERE");
 
     const handleFileChange = (event) => {
@@ -57,7 +56,6 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
     };
 
     const handleLinkClick = () => {
-        setLinkClicked(true);
         setLinkText("...");
     };
 
@@ -107,6 +105,7 @@ export default function App() {
     const [coveragePercentage, setCoveragePercentage] = useState(0);
     const [prediction, setPrediction] = useState('');
     const [infoBoxVisible, setInfoBoxVisible] = useState(false);  // Ensure state is defined
+    const [linkClicked, setLinkClicked] = useState(false);  // Ensure state is defined
 
     const handleGlobalClick = () => {
         if (!linkClicked) {
@@ -124,6 +123,7 @@ export default function App() {
                         setCoveragePercentage={setCoveragePercentage}
                         setPrediction={setPrediction}
                         setInfoBoxVisible={setInfoBoxVisible}
+                        linkClicked={linkClicked}
                     />
                 </div>
                 {previewSource && (
@@ -230,7 +230,7 @@ const styles = {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
         transition: 'opacity 0.5s',
-        opacity: infoBoxVisible ? 1 : 0,  // Update visibility based on infoBoxVisible state
+        opacity: 1,  // Always set to 1 for now to prevent undefined issue during build
     },
     infoContent: {
         display: 'flex',
