@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function FileUpload({ setPreviewSource, setCoveragePercentage }) {
+function FileUpload({ setPreviewSource, setCoveragePercentage, setIsAi }) {
     const [selectedFile, setSelectedFile] = useState(null);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            document.getElementById('file-upload-area').style.transform = 'translateX(-50%)';
+        }, 1000); // 1 second delay before moving to the left
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -34,6 +41,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
                 const data = await response.json();
                 const aiProbability = data.percent_ai;
                 setCoveragePercentage((aiProbability * 100).toFixed(2));  // Set the coverage percentage
+                setIsAi(data.is_ai);  // Set whether the image is AI-generated or not
                 alert(`Probability that the image is AI-generated: ${(aiProbability * 100).toFixed(2)}%`);
             } else {
                 alert('Failed to upload the image.');
@@ -66,16 +74,18 @@ function FileUpload({ setPreviewSource, setCoveragePercentage }) {
 export default function App() {
     const [previewSource, setPreviewSource] = useState(null);
     const [coveragePercentage, setCoveragePercentage] = useState(0);
+    const [isAi, setIsAi] = useState(false);
     const [percentageTextVisible, setPercentageTextVisible] = useState(false);
 
     return (
         <div style={styles.gradient}>
             <div style={styles.container}>
-                <div style={styles.fileUploadArea}>
+                <div id="file-upload-area" style={styles.fileUploadArea}>
                     <h1 style={styles.logoText}>reAlity|check</h1>
                     <FileUpload
                         setPreviewSource={setPreviewSource}
                         setCoveragePercentage={setCoveragePercentage}
+                        setIsAi={setIsAi}
                     />
                 </div>
                 {previewSource && (
@@ -101,8 +111,9 @@ export default function App() {
                     </div>
                 )}
                 {percentageTextVisible && (
-                    <div style={styles.probabilityBox} data-testid="probability-box">
-                        Probability: {coveragePercentage}%
+                    <div style={styles.infoBox} data-testid="info-box">
+                        <p>Probability: {coveragePercentage}%</p>
+                        <p>Status: {isAi ? 'AI-Generated' : 'Real'}</p>
                     </div>
                 )}
             </div>
@@ -124,7 +135,7 @@ const styles = {
     },
     container: {
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',  // Updated to row for horizontal layout
         alignItems: 'center',
         justifyContent: 'center',
         gap: '20px',
@@ -137,6 +148,10 @@ const styles = {
         borderRadius: '10px',
         padding: '20px',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+        position: 'absolute',
+        left: '50%',
+        transform: 'translateX(0)',
+        transition: 'transform 1s ease-in-out',
     },
     logoText: {
         fontSize: '36px',
@@ -160,7 +175,7 @@ const styles = {
     },
     imageContainer: {
         position: 'relative',
-        width: '80%',
+        width: '50%',  // Adjusted to fit the middle of the screen
         maxWidth: '800px',
         maxHeight: '80vh',
         overflow: 'hidden',
@@ -182,18 +197,15 @@ const styles = {
         borderBottomLeftRadius: '10px',
         borderBottomRightRadius: '10px',
     },
-    probabilityBox: {
-        position: 'fixed',
-        right: '5%',
-        top: '50%',
-        transform: 'translateY(-50%)',
+    infoBox: {
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        padding: '10px 20px',
-        borderRadius: '5px',
+        padding: '20px',
+        borderRadius: '10px',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
-        fontSize: '24px', // Slightly bigger font
+        fontSize: '24px',
         color: '#000',
         fontWeight: 'bold',
         textAlign: 'center',
+        width: '20%',  // Adjusted to fit the side of the screen
     },
 };
