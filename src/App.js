@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction }) {
+function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setImageUploaded }) {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
@@ -15,6 +15,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction }) 
 
             // Send the image file to the backend after it's selected
             uploadImage(file);
+            setImageUploaded(true);
         } else {
             alert('Please upload a valid image file.');
         }
@@ -33,7 +34,10 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction }) 
             if (response.ok) {
                 const data = await response.json();
                 const aiProbability = data.percent_ai;
-                const percentage = (aiProbability * 100).toFixed(2);
+                let percentage = (aiProbability * 100).toFixed(2);
+                if (aiProbability <= 0.5) {
+                    percentage = (100 - percentage).toFixed(2);
+                }
                 setCoveragePercentage(percentage);  // Set the coverage percentage
                 setPrediction(aiProbability > 0.5 ? 'AI-generated' : 'Real');
             } else {
@@ -57,6 +61,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction }) 
                 type="file"
                 id="file-input"
                 onChange={handleFileChange}
+                onClick={(event) => event.target.value = null}
                 style={{ display: 'none' }}
                 accept="image/*"
             />
@@ -68,6 +73,7 @@ export default function App() {
     const [previewSource, setPreviewSource] = useState(null);
     const [coveragePercentage, setCoveragePercentage] = useState(0);
     const [prediction, setPrediction] = useState('');
+    const [imageUploaded, setImageUploaded] = useState(false);
 
     return (
         <div style={styles.gradient}>
@@ -78,6 +84,7 @@ export default function App() {
                         setPreviewSource={setPreviewSource}
                         setCoveragePercentage={setCoveragePercentage}
                         setPrediction={setPrediction}
+                        setImageUploaded={setImageUploaded}
                     />
                 </div>
                 {previewSource && (
@@ -89,13 +96,15 @@ export default function App() {
                         />
                     </div>
                 )}
-                <div style={styles.infoBox}>
-                    <div style={styles.infoContent}>
-                        <span style={styles.percentage}>{coveragePercentage}%</span>
-                        <span style={styles.predictionText}>{prediction}</span>
+                {imageUploaded && (
+                    <div style={styles.infoBox}>
+                        <div style={styles.infoContent}>
+                            <span style={styles.percentage}>{coveragePercentage}%</span>
+                            <span style={styles.predictionText}>{prediction}</span>
+                        </div>
+                        <p style={styles.probabilityText}>Probability</p>
                     </div>
-                    <p style={styles.probabilityText}>Probability</p>
-                </div>
+                )}
             </div>
         </div>
     );
