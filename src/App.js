@@ -89,13 +89,11 @@ export default function App() {
                         />
                     </div>
                 )}
-                {coveragePercentage > 0 && (
-                    <div style={styles.infoBox}>
-                        <p style={styles.percentage}>{coveragePercentage}%</p>
-                        <p style={styles.probabilityText}>Probability</p>
-                        <p style={styles.predictionText}>{prediction}</p>
-                    </div>
-                )}
+                <div style={styles.infoBox}>
+                    <p style={styles.percentage}>{coveragePercentage}%</p>
+                    <p style={styles.probabilityText}>Probability</p>
+                    <p style={styles.predictionText}>{prediction}</p>
+                </div>
             </div>
         </div>
     );
