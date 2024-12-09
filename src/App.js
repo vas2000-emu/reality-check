@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setInfoBoxVisible, linkClicked }) {
+function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setInfoBoxVisible }) {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [linkClicked, setLinkClicked] = useState(false);
     const [linkText, setLinkText] = useState("BEGIN HERE");
 
     const handleFileChange = (event) => {
@@ -56,6 +57,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
     };
 
     const handleLinkClick = () => {
+        setLinkClicked(true);
         setLinkText("...");
     };
 
@@ -105,17 +107,10 @@ export default function App() {
     const [coveragePercentage, setCoveragePercentage] = useState(0);
     const [prediction, setPrediction] = useState('');
     const [infoBoxVisible, setInfoBoxVisible] = useState(false);  // Ensure state is defined
-    const [linkClicked, setLinkClicked] = useState(false);  // Ensure state is defined
-
-    const handleGlobalClick = () => {
-        if (!linkClicked) {
-            alert('Please click on the link labeled "BEGIN HERE" before using this website.');
-        }
-    };
 
     return (
-        <div style={styles.gradient} onClick={handleGlobalClick}>
-            <div style={styles.container} onClick={(e) => e.stopPropagation()}>
+        <div style={styles.gradient}>
+            <div style={styles.container}>
                 <div style={styles.fileUploadArea}>
                     <h1 style={styles.logoText}>reAlity|check</h1>
                     <FileUpload
@@ -123,7 +118,6 @@ export default function App() {
                         setCoveragePercentage={setCoveragePercentage}
                         setPrediction={setPrediction}
                         setInfoBoxVisible={setInfoBoxVisible}
-                        linkClicked={linkClicked}
                     />
                 </div>
                 {previewSource && (
