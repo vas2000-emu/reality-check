@@ -5,6 +5,7 @@ from PIL import Image
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from io import BytesIO
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 class VerifierCNN(nn.Module):
     def __init__(self):
@@ -52,6 +53,7 @@ def predict_image(image_bytes, model):
 
 # Initialize Flask app
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 cors = CORS(app, resources={r"/predict": {"origins": "http://localhost:3000"}})  # Allow CORS only for the specific route
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -83,6 +85,9 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Run the app
+# Handler function for Netlify Functions
+def handler(event, context):
+    return app(event, context)
+
 if __name__ == '__main__':
     app.run(debug=True)

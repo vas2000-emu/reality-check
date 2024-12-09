@@ -6,7 +6,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setIsAi }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             document.getElementById('file-upload-area').style.transform = 'translateX(-50%)';
-        }, 1000); // 1 second delay before moving to the left
+        }, 1000);
         return () => clearTimeout(timer);
     }, []);
 
@@ -19,8 +19,6 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setIsAi }) {
                 setPreviewSource(reader.result);
             };
             reader.readAsDataURL(file);
-
-            // Send the image file to the backend after it's selected
             uploadImage(file);
         } else {
             alert('Please upload a valid image file.');
@@ -32,7 +30,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setIsAi }) {
         formData.append('image', file);
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/predict', {  // Update this URL with your deployed Flask API endpoint
+            const response = await fetch('/.netlify/functions/predict', {
                 method: 'POST',
                 body: formData,
             });
@@ -40,8 +38,8 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setIsAi }) {
             if (response.ok) {
                 const data = await response.json();
                 const aiProbability = data.percent_ai;
-                setCoveragePercentage((aiProbability * 100).toFixed(2));  // Set the coverage percentage
-                setIsAi(data.is_ai);  // Set whether the image is AI-generated or not
+                setCoveragePercentage((aiProbability * 100).toFixed(2));
+                setIsAi(data.is_ai);
                 alert(`Probability that the image is AI-generated: ${(aiProbability * 100).toFixed(2)}%`);
             } else {
                 alert('Failed to upload the image.');
@@ -206,6 +204,6 @@ const styles = {
         color: '#000',
         fontWeight: 'bold',
         textAlign: 'center',
-        width: '20%',  // Adjusted to fit the side of the screen
+        width: '20%',
     },
 };
