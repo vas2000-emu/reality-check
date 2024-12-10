@@ -187,7 +187,7 @@ const styles = {
     },
     infoBox: {
         position: 'fixed',
-        right: '3%',
+        right: '1%',
         top: '50%',
         transform: 'translateY(-50%)',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
