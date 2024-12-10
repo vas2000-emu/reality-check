@@ -13,8 +13,6 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
                 setPreviewSource(reader.result);
             };
             reader.readAsDataURL(file);
-
-            // Send the image file to the backend after it's selected
             uploadImage(file);
             setInfoBoxVisible(true);
         } else {
@@ -189,7 +187,7 @@ const styles = {
     },
     infoBox: {
         position: 'fixed',
-        right: '5%',
+        right: '3%',
         top: '50%',
         transform: 'translateY(-50%)',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
