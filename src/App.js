@@ -3,14 +3,8 @@ import React, { useState } from 'react';
 function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, setInfoBoxVisible }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [linkClicked, setLinkClicked] = useState(false);
-    const [linkText, setLinkText] = useState("BEGIN HERE");
 
     const handleFileChange = (event) => {
-        if (!linkClicked) {
-            alert('Please click on the link labeled "BEGIN HERE" before using this website.');
-            return;
-        }
-
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setSelectedFile(file);
@@ -22,7 +16,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
 
             // Send the image file to the backend after it's selected
             uploadImage(file);
-            setInfoBoxVisible(true);  // Show infoBox when an image is uploaded
+            setInfoBoxVisible(true);
         } else {
             alert('Please upload a valid image file.');
         }
@@ -45,7 +39,7 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
                 if (aiProbability <= 0.5) {
                     percentage = (100 - percentage).toFixed(2);
                 }
-                setCoveragePercentage(percentage);  // Set the coverage percentage
+                setCoveragePercentage(percentage);
                 setPrediction(aiProbability > 0.5 ? 'AI-generated' : 'Real');
             } else {
                 alert('Failed to upload the image.');
@@ -58,29 +52,26 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
 
     const handleLinkClick = () => {
         setLinkClicked(true);
-        setLinkText("...");
-    };
-
-    const handleReplaceFileClick = () => {
-        setInfoBoxVisible(false);  // Temporarily hide infoBox when replacing the file
-        document.getElementById('file-input').click();
+        window.open('https://drive.google.com/drive/folders/1BCWRh13DqZGT-DcalODgCBNqm0kTZzMu?usp=sharing', '_blank');
     };
 
     return (
         <div style={styles.fileUploadContainer}>
-            <button
-                onClick={() => {
-                    if (!linkClicked) {
-                        alert('Please click on the link labeled "BEGIN HERE" before using this website.');
-                    } else {
-                        handleReplaceFileClick();
-                    }
-                }}
-                style={styles.uploadButton}
-                disabled={!linkClicked}
-            >
-                {selectedFile ? 'Replace File' : 'Upload Image Here!'}
-            </button>
+            {!linkClicked ? (
+                <button
+                    onClick={handleLinkClick}
+                    style={styles.uploadButton}
+                >
+                    BEGIN HERE
+                </button>
+            ) : (
+                <button
+                    onClick={() => document.getElementById('file-input').click()}
+                    style={styles.uploadButton}
+                >
+                    {selectedFile ? 'Replace File' : 'Upload Image Here!'}
+                </button>
+            )}
             <input
                 type="file"
                 id="file-input"
@@ -89,15 +80,6 @@ function FileUpload({ setPreviewSource, setCoveragePercentage, setPrediction, se
                 style={{ display: 'none' }}
                 accept="image/*"
             />
-            <a
-                href="https://drive.google.com/drive/folders/1BCWRh13DqZGT-DcalODgCBNqm0kTZzMu?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={styles.link}
-                onClick={handleLinkClick}
-            >
-                {linkText}
-            </a>
         </div>
     );
 }
@@ -106,7 +88,7 @@ export default function App() {
     const [previewSource, setPreviewSource] = useState(null);
     const [coveragePercentage, setCoveragePercentage] = useState(0);
     const [prediction, setPrediction] = useState('');
-    const [infoBoxVisible, setInfoBoxVisible] = useState(false);  // Ensure state is defined
+    const [infoBoxVisible, setInfoBoxVisible] = useState(false);
 
     return (
         <div style={styles.gradient}>
@@ -205,14 +187,6 @@ const styles = {
         borderRadius: '10px',
         marginTop: '20px',
     },
-    link: {
-        color: '#0074D9',
-        textDecoration: 'underline',
-        cursor: 'pointer',
-        marginTop: '10px',
-        fontFamily: `'Courier New', Courier, monospace`,
-        fontSize: '18px', // Adjust font size to match reAlity|check
-    },
     infoBox: {
         position: 'fixed',
         right: '5%',
@@ -224,18 +198,18 @@ const styles = {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
         transition: 'opacity 0.5s',
-        opacity: 1,  // Always set to 1 for now to prevent undefined issue during build
+        opacity: 1,
     },
     infoContent: {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',  // Left justify the probability text
+        justifyContent: 'flex-start',
     },
     percentage: {
         fontSize: '48px',
         fontWeight: 'bold',
         color: '#000',
-        marginRight: '10px',  // Add some space between the percentage and the prediction text
+        marginRight: '10px',
     },
     predictionText: {
         fontSize: '48px',
@@ -246,6 +220,6 @@ const styles = {
         fontSize: '24px',
         color: '#000',
         marginTop: '10px',
-        textAlign: 'left',  // Left justify the probability text
+        textAlign: 'left',
     },
 };
