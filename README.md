@@ -4,7 +4,7 @@ To use the web application, you will be required to run a few commands to instal
 To install the necessary packages, you simply need to copy and paste the text from `requirements.txt`, excluding the first line, to your terminal, which can be either `Powershell` or `Command Prompt`.   
 After installing the necessary packages and downloading the aforementioned files, you will need to move those downloaded files to your `C:\Users\<your-username-here>` directory for ease of use.   
 Now, open a new terminal session, which will open to the aforementioned directory, and run:   
-##    `python app.py`   
+###    `python app.py`   
 
 This will run a flask server with our pre-trained model available on it to perform the necessary probability calculations for the web application.   
 To use this tool, simply click the `Upload Image Here!` button, choose a file with a human face, preferably zoomed in on the face and somewhat square, click Ok, then see the result. You can try it with as many images as you want by using the `Replace file` button.   
