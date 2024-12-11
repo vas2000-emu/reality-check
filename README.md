@@ -1,7 +1,7 @@
 # `reAlity|check`   
 This will only work assuming you have python installed on your computer. (These are instructions for a Windows computer)   
 To use the web application, you will be required to run a few commands to install the necessary packages in your terminal, as well as downloading the `app.py` and `cnn_weights.pth` files.   
-To install the necessary packages, you simply need to copy and paste the text from requirements.txt to your terminal, which can be either `Powershell` or `Command Prompt`.   
+To install the necessary packages, you simply need to copy and paste the text from `requirements.txt`, excluding the first line, to your terminal, which can be either `Powershell` or `Command Prompt`.   
 After installing the necessary packages and downloading the aforementioned files, you will need to move those downloaded files to your `C:\Users\<your-username-here>` directory for ease of use.   
 Now, open a new terminal session, which will open to the aforementioned directory, and run:   
 ##    `python app.py`   
