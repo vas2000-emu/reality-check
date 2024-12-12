@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "reality|check",
+  "name": "[reality|check] An AI Image Detection Tool",
   "icons": [
     {
       "src": "favicon.ico",
