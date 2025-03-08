@@ -11,4 +11,4 @@ To use this tool, simply click the `Upload Image Here!` button, choose a file wi
 Once you are done using the web application, simply close the flask server by navigating to the terminal window and pressing the `[CTRL]` and `[C]` keys simultaneously.   
 
 Hope you enjoyed using our tool!   
-### `-reality|check team`
+### `-reality|check Team`
